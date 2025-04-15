@@ -1,3 +1,4 @@
 # Translate-app
 
-- [Documents](https://github.com/daehyun99/Translate-app/wiki)
+## Documents
+- [wiki](https://github.com/daehyun99/Translate-app/wiki)
