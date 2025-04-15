@@ -1,3 +1,6 @@
 [submodule "Using-AI-Tools-Back"]
 	path = Using-AI-Tools-Back
 	url = https://github.com/daehyun99/Using-AI-Tools-Back.git
+[submodule "Using-AI-Tools-Front"]
+	path = Using-AI-Tools-Front
+	url = https://github.com/daehyun99/Using-AI-Tools-Front.git
