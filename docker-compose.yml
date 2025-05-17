@@ -1,0 +1,70 @@
+version: '3.10'
+
+services:
+  init_dirs:
+    image: busybox
+    command: sh -c "mkdir -p /work/tmp/docs /work/tmp/videos"
+    volumes:
+      - ./Using-AI-Tools-Back:/work
+  db:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PW}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PW}
+    ports:
+      - 3307:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./Using-AI-Tools-Back/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend
+
+  fastapi:
+    build:
+      context: ./Using-AI-Tools-Back
+      dockerfile: Dockerfile
+    container_name: fastapi_server
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - init_dirs
+      - db
+    env_file:
+      - .env
+    environment:
+      - VIDEO_SAVE_PATH=/app/tmp/videos/
+      - DOCS_SAVE_PATH=/app/tmp/docs/
+    networks:
+      - backend
+    volumes:
+      - ./Using-AI-Tools-Back:/app
+      # - ./cookies.txt:/app/cookies.txt
+      - ./Using-AI-Tools-Back/tmp/videos/:/app/tmp/videos/
+      - ./Using-AI-Tools-Back/tmp/docs/:/app/tmp/docs/
+      - ./Using-AI-Tools-Back/htmlcov:/app/htmlcov
+
+  frontend:
+    build:
+      context: ./Using-AI-Tools-Front
+      dockerfile: Dockerfile
+    container_name: frontend_server
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - init_dirs
+    networks:
+      - backend
+
+volumes:
+  mysql_data:
+
+networks:
+  backend:
